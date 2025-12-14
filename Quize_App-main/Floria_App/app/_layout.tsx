@@ -7,7 +7,7 @@ export default function RootLayout() {
     <SupabaseProvider>
       <Stack
         screenOptions={{
-          headerShown: false, // geen zwarte balk boven
+          headerShown: false,
         }}
       />
     </SupabaseProvider>
