@@ -12,16 +12,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { useSupabase } from "@/context/SupabaseContext";
 import type { Country } from "@/types";
+import { useRouter } from "expo-router";
 
 const FavoritesScreen = () => {
   const { favorites, toggleFavorite } = useSupabase();
+  const router = useRouter();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Gedeelde header met hamburger + drawer */}
       <FloriaHeader section="favorites" />
 
-      {/* Titel */}
       <Text style={styles.title}>Favorite Countrys</Text>
 
       <ScrollView
@@ -36,7 +36,17 @@ const FavoritesScreen = () => {
         )}
 
         {favorites.map((country: Country) => (
-          <View key={country.id} style={styles.rowOuter}>
+          <TouchableOpacity
+            key={country.id}
+            style={styles.rowOuter}
+            activeOpacity={0.85}
+            onPress={() =>
+              router.push({
+                pathname: "/dashboard/country/[id]",
+                params: { id: String(country.id) },
+              })
+            }
+          >
             <View style={styles.rowInner}>
               {country.flag_url ? (
                 <Image
@@ -52,15 +62,17 @@ const FavoritesScreen = () => {
 
               <Text style={styles.countryName}>{country.name}</Text>
 
-              {/* X-knop om uit favorieten te halen */}
               <TouchableOpacity
                 style={styles.iconButton}
-                onPress={() => toggleFavorite(country)}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(country);
+                }}
               >
                 <Text style={styles.iconButtonText}>✕</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -93,7 +105,7 @@ const styles = StyleSheet.create({
   rowOuter: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#22d3ee",
+    borderColor: "#454646ff",
     marginBottom: 16,
     padding: 2,
   },
@@ -133,10 +145,10 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#4b5563",
+    borderColor: "#060000ff",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15,23,42,0.9)",
+    backgroundColor: "rgba(0, 1, 2, 0.9)",
   },
   iconButtonText: {
     color: "#ffffff",

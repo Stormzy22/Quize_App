@@ -1,4 +1,3 @@
-// app/dashboard/countries.tsx
 import FloriaHeader from "@/components/ui/FloriaHeader";
 import React, { useMemo, useState } from "react";
 import {
@@ -10,11 +9,17 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useSupabase } from "@/context/SupabaseContext";
 import type { Country } from "@/types";
+
+// icons
+const searchIcon = require("@/assets/images/search.png");
+const addIcon = require("@/assets/images/add.png");
+const checkIcon = require("@/assets/images/check.png");
 
 /** ---- RENDER VAN ÉÉN RIJ (land) ---- */
 
@@ -60,7 +65,11 @@ const CountryRow: React.FC<CountryRowProps> = ({
           onToggleFavorite();
         }}
       >
-        <Text style={styles.addButtonText}>{favorite ? "✓" : "+"}</Text>
+        <Image
+          source={favorite ? checkIcon : addIcon}
+          style={styles.favoriteIcon}
+          resizeMode="contain"
+        />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -74,7 +83,6 @@ const CountriesScreen = () => {
     useSupabase();
   const [search, setSearch] = useState("");
 
-  // basisfilter: alleen landen met niet-lege flag_url die op een echte URL lijkt
   const countriesWithFlag = useMemo(
     () =>
       countries
@@ -130,7 +138,7 @@ const CountriesScreen = () => {
 
       {/* Search bar */}
       <View style={styles.searchWrapper}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <Image source={searchIcon} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search"
@@ -172,7 +180,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 12, // zelfde als quiz + favorites → header op exact dezelfde hoogte
+    paddingTop: 12,
   },
 
   centerSafeArea: {
@@ -207,16 +215,17 @@ const styles = StyleSheet.create({
   searchWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(243,244,246,1)",
+    backgroundColor: "rgba(255, 255, 255, 1)",
     borderRadius: 9999,
     paddingHorizontal: 14,
     height: 44,
     marginBottom: 16,
   },
   searchIcon: {
-    fontSize: 18,
+    width: 18,
+    height: 18,
     marginRight: 8,
-    color: "#6b7280",
+    tintColor: "#6b7280",
   },
   searchInput: {
     flex: 1,
@@ -238,7 +247,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#22d3ee",
+    borderColor: "#4e4e4eff",
   },
   rowLeft: {
     flexDirection: "row",
@@ -264,22 +273,18 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#22c55e",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "transparent",
   },
   addButtonActive: {
-    backgroundColor: "#16a34a",
-    borderWidth: 2,
-    borderColor: "#bbf7d0",
+    
   },
-  addButtonText: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "800",
-    marginTop: -2,
+  favoriteIcon: {
+    width: 32,
+    height: 32,
   },
 });

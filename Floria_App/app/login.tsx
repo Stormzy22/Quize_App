@@ -14,8 +14,7 @@ import { Text } from "@/components/ui/text";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useRouter } from "expo-router";
 
-const background = require("@/assets/images/background.jpg");
-const earth = require("@/assets/images/earth.png");
+const background = require("@/assets/images/background3.png");
 
 const LoginScreen = () => {
   const [email, setEmail] = useState<string>("");
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingVertical: 24,
-    backgroundColor: "rgba(15,23,42,0.92)", // donker-blauw/zwart
+    backgroundColor: "rgba(0, 2, 6, 0.92)", // donker-blauw/zwart
   },
   cardTitle: {
     color: "#ffffff",
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   linkSmall: {
-    color: "#38bdf8",
+    color: "#f0f6f9ff",
     fontSize: 12,
   },
 
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     borderRadius: 9999,
-    backgroundColor: "#38bdf8",
+    backgroundColor: "#3e3f3fff",
     paddingVertical: 12,
     alignItems: "center",
   },

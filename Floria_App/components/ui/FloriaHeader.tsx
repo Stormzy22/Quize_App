@@ -14,7 +14,8 @@ import {
   PanResponder,
 } from "react-native";
 
-const earth = require("@/assets/images/earth.png");
+const earth = require("@/assets/images/earth2.png");
+const menuIcon = require("@/assets/images/menu.png"); // 👈 nieuw
 
 type Section = "home" | "quiz" | "countries" | "favorites" | "country";
 
@@ -118,9 +119,8 @@ export default function FloriaHeader({ section }: Props) {
           onPress={() => setOpen(true)}
           activeOpacity={0.8}
         >
-          <View style={styles.hamburgerLine} />
-          <View style={styles.hamburgerLine} />
-          <View style={styles.hamburgerLine} />
+          {/* 👇 ipv drie lijntjes nu je menu.png */}
+          <Image source={menuIcon} style={styles.menuIcon} resizeMode="contain" />
         </TouchableOpacity>
 
         <View style={styles.logoRow}>
@@ -227,15 +227,15 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "rgba(0,0,0,0.45)",
+     //backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
     alignItems: "center",
   },
-  hamburgerLine: {
+  // 👇 nieuw: stijl voor het menu-icoon
+  menuIcon: {
     width: 18,
-    height: 2,
-    backgroundColor: "#ffffff",
-    marginVertical: 1,
+    height: 18,
+    tintColor: "#ffffff", // als je icon zwart/wit is, wordt hij mooi wit
   },
   logoRow: {
     flexDirection: "row",
@@ -245,6 +245,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 8,
+    backgroundColor: "white",
+    borderRadius: 100
   },
   logoText: {
     color: "#ffffff",

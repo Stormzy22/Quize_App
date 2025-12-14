@@ -6,25 +6,20 @@ import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
 import FloriaHeader from "@/components/ui/FloriaHeader";
 
-const earth = require("../../assets/images/earth.png");
+const earth = require("../../assets/images/earth2.png");
 
 const DashboardHome = () => {
   const router = useRouter();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Gemeenschappelijke header met hamburger + logo */}
 
-      {/* Centraal blok met je content */}
       <View style={styles.content}>
-        {/* Grote aarde */}
         <Image source={earth} style={styles.earth} />
 
-        {/* Titel */}
         <Text style={styles.titleTop}>Welcome to</Text>
         <Text style={styles.titleBottom}>Floria</Text>
 
-        {/* Quiz-knop */}
         <TouchableOpacity
           style={[styles.button, styles.quizButton]}
           onPress={() => router.push("/dashboard/quiz")}
@@ -32,7 +27,6 @@ const DashboardHome = () => {
           <Text style={styles.buttonText}>Quiz</Text>
         </TouchableOpacity>
 
-        {/* Country-knop */}
         <TouchableOpacity
           style={[styles.button, styles.countryButton]}
           onPress={() => router.push("/dashboard/countries")}
@@ -40,7 +34,6 @@ const DashboardHome = () => {
           <Text style={styles.buttonText}>Country</Text>
         </TouchableOpacity>
 
-        {/* Favorites-knop */}
         <TouchableOpacity
           style={[styles.button, styles.favoritesButton]}
           onPress={() => router.push("/dashboard/favorites")}
@@ -69,6 +62,8 @@ const styles = StyleSheet.create({
     width: 180,
     height: 180,
     marginBottom: 40,
+    backgroundColor: "white",
+    borderRadius: 100
   },
   titleTop: {
     color: "#ffffff",
@@ -91,15 +86,17 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     marginBottom: 16,
+    borderColor: "white",
+    borderWidth: 1
   },
   quizButton: {
-    backgroundColor: "#38bdf8", // blauw
+    backgroundColor: "#020608ff", 
   },
   countryButton: {
-    backgroundColor: "#fde047", // geel
+    backgroundColor: "#0b0b0bff", 
   },
   favoritesButton: {
-    backgroundColor: "#34d399", // groen
+    backgroundColor: "#090909ff", 
   },
   buttonText: {
     color: "#ffffff",

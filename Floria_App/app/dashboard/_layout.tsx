@@ -3,7 +3,7 @@ import React from "react";
 import { ImageBackground, StyleSheet } from "react-native";
 import { Slot } from "expo-router";
 
-const background = require("@/assets/images/background.jpg");
+const background = require("@/assets/images/background2.jpg");
 
 export default function DashboardLayout() {
   return (
@@ -12,7 +12,6 @@ export default function DashboardLayout() {
       style={styles.background}
       resizeMode="cover"
     >
-      {/* Alle nested routes: /dashboard, /dashboard/quiz, /dashboard/countries, ... */}
       <Slot />
     </ImageBackground>
   );

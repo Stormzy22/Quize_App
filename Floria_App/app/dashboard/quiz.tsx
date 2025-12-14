@@ -19,8 +19,8 @@ const crossIcon = require("@/assets/images/cross.png");
 const TOTAL_QUESTIONS = 10;
 
 type Question = {
-  country: Country;   // land waarvan we de vlag tonen
-  options: Country[]; // 4 landen als antwoordopties
+  country: Country;   
+  options: Country[]; 
 };
 
 function createQuestion(countries: Country[]): Question | null {
@@ -50,7 +50,7 @@ const QuizScreen = () => {
   const [question, setQuestion] = useState<Question | null>(null);
   const [finished, setFinished] = useState(false);
 
-  // Alleen landen met geldige vlag
+
   const quizCountries = useMemo(
     () =>
       countries.filter(
@@ -227,10 +227,8 @@ const QuizScreen = () => {
         </View>
       </View>
 
-      {/* Vraag tekst */}
       <Text style={styles.questionTitle}>What Country ?</Text>
 
-      {/* Vlag */}
       <View style={styles.flagContainer}>
         {currentQuestion.country.flag_url ? (
           <Image
@@ -245,7 +243,6 @@ const QuizScreen = () => {
         )}
       </View>
 
-      {/* Antwoordopties */}
       <View style={styles.optionsGrid}>
         {currentQuestion.options.map((option) => {
           const isSelected = selectedId === option.id;
@@ -306,7 +303,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#2fb0ff",
+    backgroundColor: "white",
   },
 
   // Vraag
@@ -330,14 +327,14 @@ const styles = StyleSheet.create({
     height: 160,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.5)",
+    borderColor: "rgba(5, 5, 5, 0.5)",
   },
   flagPlaceholder: {
     width: 280,
     height: 160,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.5)",
+    borderColor: "rgba(11, 10, 10, 0.5)",
     backgroundColor: "rgba(0,0,0,0.3)",
     alignItems: "center",
     justifyContent: "center",
@@ -357,7 +354,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#304ffe",
+    borderColor: "#f5f5f7ff",
     backgroundColor: "#000000",
     paddingVertical: 10,
     paddingHorizontal: 8,
@@ -411,14 +408,14 @@ const styles = StyleSheet.create({
   // GROTERE kaart
   scoreCard: {
     width: "100%",
-    minHeight: 260,                    // pakt meer verticale ruimte
+    minHeight: 260,                    
     backgroundColor: "rgba(0,0,0,0.75)",
     borderRadius: 32,
     paddingHorizontal: 24,
     paddingVertical: 32,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#22d3ee",
+    borderColor: "#f8fafbff",
     // beetje schaduw
     shadowColor: "#000",
     shadowOpacity: 0.35,
@@ -474,7 +471,7 @@ const styles = StyleSheet.create({
   },
 
   playAgainButton: {
-    backgroundColor: "#38bdf8",
+    backgroundColor: "#3d3e3eff",
     borderRadius: 9999,
     paddingVertical: 16,
     paddingHorizontal: 40,
