@@ -1,3 +1,4 @@
+// app/dashboard/countries.tsx
 import FloriaHeader from "@/components/ui/FloriaHeader";
 import React, { useMemo, useState } from "react";
 import {
@@ -280,9 +281,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "transparent",
   },
-  addButtonActive: {
-    
-  },
+  addButtonActive: {},
   favoriteIcon: {
     width: 32,
     height: 32,

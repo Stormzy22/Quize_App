@@ -8,8 +8,8 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useState,
   useMemo,
+  useState,
 } from "react";
 
 interface SupabaseContextProps {
@@ -40,12 +40,11 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   const [countries, setCountries] = useState<Country[]>([]);
-  // we bewaren alleen de country_code (abbreviation) van favorieten
   const [favoriteCodes, setFavoriteCodes] = useState<string[]>([]);
 
   const router = useRouter();
 
-  // 👉 1. Sessie ophalen + routeren bij inloggen/uitloggen
+  /* 👉 1. Sessie ophalen + routeren bij inloggen/uitloggen */
   useEffect(() => {
     let cancelled = false;
 
@@ -73,8 +72,6 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       if (event === "SIGNED_IN") {
         router.replace("/dashboard");
       } else if (event === "SIGNED_OUT") {
-        // bij uitloggen ook lokale favorites leegmaken
-        setFavoriteCodes([]);
         router.replace("/login");
       }
     });
@@ -85,7 +82,43 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  // 👉 2. Countries ophalen (externe API)
+  /* 👉 2. Favorites ophalen uit Supabase wanneer je inlogt (GET op dezelfde API) */
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchFavorites = async () => {
+      if (!session) {
+        setFavoriteCodes([]);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("favorites")
+          .select("country_code")
+          .eq("user_id", session.user.id);
+
+        if (error) throw error;
+        if (cancelled) return;
+
+        const codes =
+          data?.map((row: { country_code: string | null }) => row.country_code)
+            .filter((c): c is string => !!c) ?? [];
+
+        setFavoriteCodes(codes);
+      } catch (e) {
+        console.error("Error fetching favorites from Supabase", e);
+      }
+    };
+
+    fetchFavorites();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
+  /* 👉 3. Countries ophalen (externe API) */
   useEffect(() => {
     if (!session) {
       setCountries([]);
@@ -114,18 +147,12 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           name: item.name ?? "Onbekend",
           continent: item.continent ?? item.region ?? "Unknown",
           flag_url:
-            item.flag_url ??
-            item.flag ??
-            item.media?.flag ??
-            null,
+            item.flag_url ?? item.flag ?? item.media?.flag ?? null,
           capital: item.capital ?? item.capitalCity ?? null,
           population: item.population ?? item.populationCount ?? null,
           currency: item.currency ?? item.mainCurrency ?? null,
           abbreviation:
-            item.abbreviation ??
-            item.code ??
-            item.alpha2Code ??
-            null,
+            item.abbreviation ?? item.code ?? item.alpha2Code ?? null,
         }));
 
         if (cancelled) return;
@@ -152,42 +179,6 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [session]);
 
-  // 👉 3. Favorites uit Supabase ophalen zodra we een session hebben
-  useEffect(() => {
-    if (!session) {
-      setFavoriteCodes([]);
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchFavorites = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("favorites")
-          .select("country_code")
-          .eq("user_id", session.user.id);
-
-        if (error) {
-          console.error("Error fetching favorites", error);
-          return;
-        }
-
-        if (!cancelled && data) {
-          setFavoriteCodes(data.map((row) => row.country_code));
-        }
-      } catch (e) {
-        console.error("Error fetching favorites", e);
-      }
-    };
-
-    fetchFavorites();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [session]);
-
   // landen die favoriet zijn op basis van de codes
   const favorites = useMemo(
     () =>
@@ -197,7 +188,7 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     [countries, favoriteCodes]
   );
 
-  // 👉 4. Auth-functies
+  /* 👉 4. Auth-functies */
 
   const login = async (email: string, password: string) => {
     setLoggingIn(true);
@@ -224,7 +215,6 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signUp({ email, password });
-
       if (error) throw error;
     } catch (e) {
       console.log(e);
@@ -232,22 +222,22 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // 👉 5. Favorite toggelen (UI + Supabase)
+  /* 👉 5. Favorites in memory + in Supabase */
+
   const toggleFavorite = async (country: Country) => {
     if (!session) return;
-    if (!country.abbreviation) return; // geen stabiele code → overslaan
+    if (!country.abbreviation) return;
 
     const code = country.abbreviation;
     const isFav = favoriteCodes.includes(code);
 
-    // Optimistisch updaten in UI
+    // UI direct updaten (optimistic)
     setFavoriteCodes((prev) =>
       isFav ? prev.filter((c) => c !== code) : [...prev, code]
     );
 
     try {
       if (isFav) {
-        // uit Supabase verwijderen
         const { error } = await supabase
           .from("favorites")
           .delete()
@@ -256,7 +246,6 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (error) throw error;
       } else {
-        // in Supabase opslaan
         const { error } = await supabase.from("favorites").insert({
           user_id: session.user.id,
           country_code: code,
@@ -266,7 +255,7 @@ const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (e) {
       console.error("Error toggling favorite", e);
-      // eventueel: rollback UI hier
+      // eventueel rollback als je wil
     }
   };
 

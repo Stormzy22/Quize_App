@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/text";
 import { useSupabase } from "@/context/SupabaseContext";
 import type { Country } from "@/types";
+import * as Speech from "expo-speech";
 
 const checkIcon = require("@/assets/images/check.png");
 const crossIcon = require("@/assets/images/cross.png");
@@ -19,8 +20,8 @@ const crossIcon = require("@/assets/images/cross.png");
 const TOTAL_QUESTIONS = 10;
 
 type Question = {
-  country: Country;   
-  options: Country[]; 
+  country: Country;
+  options: Country[];
 };
 
 function createQuestion(countries: Country[]): Question | null {
@@ -49,7 +50,6 @@ const QuizScreen = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
   const [finished, setFinished] = useState(false);
-
 
   const quizCountries = useMemo(
     () =>
@@ -106,6 +106,7 @@ const QuizScreen = () => {
   };
 
   const handlePlayAgain = () => {
+    Speech.stop(); // stop evt. lopende spraak
     if (quizCountries.length >= 4) {
       setQuestion(createQuestion(quizCountries));
       setQuestionIndex(1);
@@ -113,6 +114,16 @@ const QuizScreen = () => {
       setSelectedId(null);
       setFinished(false);
     }
+  };
+
+  const speakResult = (message: string, subMessage: string) => {
+    const text = `You scored ${score} out of ${TOTAL_QUESTIONS}. ${message}. ${subMessage}`;
+    Speech.stop();
+    Speech.speak(text, {
+      language: "en",
+      pitch: 1.0,
+      rate: 1.0,
+    });
   };
 
   /* ==== loading / error ==== */
@@ -168,7 +179,6 @@ const QuizScreen = () => {
         <FloriaHeader section="quiz" />
 
         <View style={styles.scoreContainer}>
-          {/* Grotere kaart die meer van het scherm gebruikt */}
           <View style={styles.scoreCard}>
             <Text style={styles.scoreLabel}>Your result</Text>
 
@@ -190,6 +200,14 @@ const QuizScreen = () => {
                 <Text style={styles.scoreWrong}>{wrong} wrong</Text>
               </View>
             </View>
+
+            {/* Expo Speech knop */}
+            <TouchableOpacity
+              style={styles.speakButton}
+              onPress={() => speakResult(message, subMessage)}
+            >
+              <Text style={styles.speakButtonText}>Read result aloud</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.playAgainButton}
@@ -401,14 +419,12 @@ const styles = StyleSheet.create({
   scoreContainer: {
     flex: 1,
     justifyContent: "center",
-    // kaart mag volledige breedte van safeArea nemen
     alignItems: "stretch",
   },
 
-  // GROTERE kaart
   scoreCard: {
     width: "100%",
-    minHeight: 260,                    
+    minHeight: 260,
     backgroundColor: "rgba(0,0,0,0.75)",
     borderRadius: 32,
     paddingHorizontal: 24,
@@ -416,7 +432,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#f8fafbff",
-    // beetje schaduw
     shadowColor: "#000",
     shadowOpacity: 0.35,
     shadowRadius: 16,
@@ -450,7 +465,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginBottom: 28,
+    marginBottom: 20,
   },
   scoreItem: {
     flexDirection: "row",
@@ -468,6 +483,20 @@ const styles = StyleSheet.create({
   scoreWrong: {
     color: "#fb7185",
     fontSize: 16,
+  },
+
+  speakButton: {
+    marginBottom: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 9999,
+    borderWidth: 1,
+    borderColor: "#38bdf8",
+  },
+  speakButtonText: {
+    color: "#38bdf8",
+    fontSize: 14,
+    fontWeight: "600",
   },
 
   playAgainButton: {
