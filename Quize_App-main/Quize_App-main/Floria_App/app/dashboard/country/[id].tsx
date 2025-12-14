@@ -14,7 +14,7 @@ import FloriaHeader from "@/components/ui/FloriaHeader";
 import { useSupabase } from "@/context/SupabaseContext";
 import type { Country } from "@/types";
 
-const background = require("@/assets/images/background.jpg");
+const background = require("@/assets/images/background2.jpg");
 
 const CountryDetailScreen = () => {
   const router = useRouter();
